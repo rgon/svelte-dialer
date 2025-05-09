@@ -3,7 +3,7 @@
         IDLE: 'IDLE',
         CALLING: 'CALLING',
         IN_CALL: 'IN_CALL',
-        HANGING_UP: 'HANGING_UP'
+        POST_CALL: 'POST_CALL'
     } as const;
 
     export type STATE_MACHINE_STATE = keyof typeof STATE_MACHINE_STATES;
@@ -16,6 +16,8 @@
         mdiRadioboxMarked,
         mdiTransferRight
      } from '@mdi/js';
+
+    import { fade } from 'svelte/transition';
 
     import PhoneInput from './PhoneDialInput.svelte';
 
@@ -39,12 +41,13 @@
         onHangup,
         onError,
 
-        sipState = $bindable(STATE_MACHINE_STATES.IN_CALL),
+        sipState = $bindable(STATE_MACHINE_STATES.POST_CALL),
 
         control = $bindable(undefined)
     }:Props = $props();
 
     let callTime = $state('00:00');
+    let callError:string|undefined = $state('');
 
     control = {
         call: () => {
@@ -121,7 +124,7 @@
         {/if}
     </div>
 
-    {#if sipState === STATE_MACHINE_STATES.CALLING || sipState === STATE_MACHINE_STATES.IN_CALL || sipState === STATE_MACHINE_STATES.HANGING_UP}
+    {#if sipState === STATE_MACHINE_STATES.CALLING || sipState === STATE_MACHINE_STATES.IN_CALL || sipState === STATE_MACHINE_STATES.POST_CALL}
     <div class="absolute w-full h-full backdrop-blur-md">
         <div class="w-full h-full p-4 grid grid-rows-[1.5rem_auto_1fr_3.5rem_1.5rem] grid-cols-1 gap-0">
             <!-- Spacer -->
@@ -139,7 +142,9 @@
                 </div>
 
                 <div class="text-left text-gray-500 text-sm h-6">
+                    {#if sipState === STATE_MACHINE_STATES.IN_CALL}
                     {callTime}
+                    {/if}
                 </div>
             </div>
 
@@ -153,24 +158,56 @@
             </button>
             {/snippet}
 
+            {#if sipState === STATE_MACHINE_STATES.CALLING}
+            <div class="text-center text-gray-500 text-sm my-auto flex flex-col items-center justify-center" transition:fade>
+                <div class="animate-ping h-8 w-8 rounded-full bg-gray-500 opacity-75"></div>
+                <span class="mt-4">
+                    Establishing call...
+                </span>
+            </div>
+            {:else if sipState === STATE_MACHINE_STATES.IN_CALL}
             <!-- 4 buttons grid with svg mdi icons mute,hold,transfer,info -->
-            <div class="grid grid-cols-2 gap-8 h-auto my-auto mx-auto">
+            <div class="grid grid-cols-2 gap-8 h-auto my-auto mx-auto" transition:fade>
                 {@render actionButton(mdiMicrophoneOff, 'Mute')}
                 {@render actionButton(mdiPauseCircleOutline, 'Hold')}
                 {@render actionButton(mdiTransferRight, 'Transfer')}
                 {@render actionButton(mdiRadioboxMarked, 'Record')}
             </div>
+            {:else if sipState === STATE_MACHINE_STATES.POST_CALL}
+            <div class="text-center text-gray-500 text-sm h-auto my-auto">
+                {#if callError}
+                    <h3 class="text-xl">Could not place call</h3>
+                    <span>{callError}</span>
+                {:else}
+                    <h3 class="text-xl">Call ended</h3>
+                    <span>Duration {callTime}</span>
+                {/if}
+            </div>
+            {/if}
+            
+
 
             <button
                 onclick={onHangup}
-                class="group relative flex-grow h-14 p-3.5 text-xl font-semibold text-white bg-red-500 hover:bg-red-600 rounded-md focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors"
+                class="group relative flex-grow h-14 p-3.5 text-xl font-semibold text-white
+                transition-colors
+                {(sipState === STATE_MACHINE_STATES.IN_CALL) ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-500 hover:bg-gray-600'}
+                rounded-md focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors"
             >
-                Hang Up
+                {#if sipState === STATE_MACHINE_STATES.IN_CALL}
+                    Hangup
+                {:else if sipState === STATE_MACHINE_STATES.POST_CALL}
+                    OK
+                {:else}
+                    Cancel
+                {/if}
             </button>
 
+            {#if sipState === STATE_MACHINE_STATES.IN_CALL}
             <div class="text-center text-gray-500 text-sm h-6">
                 STATS: 5kbps
             </div>
+            {/if}
         </div>
     </div>
     {/if}
