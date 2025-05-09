@@ -17,6 +17,9 @@ importers:
       sip.js:
         specifier: ^0.21.2
         version: 0.21.2
+      svelte-tel-input:
+        specifier: ^3.6.0
+        version: 3.6.0(svelte@5.28.2)
       tailwindcss:
         specifier: ^4.1.5
         version: 4.1.5
@@ -543,6 +546,9 @@ packages:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
 
+  libphonenumber-js@1.10.43:
+    resolution: {integrity: sha512-M/iPACJGsTvEy8QmUY4K0SoIFB71X2j7y2JvUMYzUXUxCNmiU+NTfHdz7gt+dC48BVfBzZi2oO6s9TDGllCfxA==}
+
   lightningcss-darwin-arm64@1.29.2:
     resolution: {integrity: sha512-cK/eMabSViKn/PG8U/a7aCorpeKLMlK0bQeNHmdb7qUnBkNPnL+oV5DjJUo0kqWsJUapZsM4jCfYItbqBDvlcA==}
     engines: {node: '>= 12.0.0'}
@@ -675,6 +681,12 @@ packages:
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: '>=5.0.0'
+
+  svelte-tel-input@3.6.0:
+    resolution: {integrity: sha512-bzgtYVWpO3cke8tqRM2JvcHO94wIp8X0C5E4SItobrmGWT8Do07jzkHN8Z+KU6RaY6Q1aBomH8neJ2LEAZAfqg==}
+    engines: {node: '>= 18', npm: '>= 8', pnpm: '>= 8', yarn: '>= 1'}
+    peerDependencies:
+      svelte: ^3.58.0 || ^4.0.0 || ^5.0.0
 
   svelte@5.28.2:
     resolution: {integrity: sha512-FbWBxgWOpQfhKvoGJv/TFwzqb4EhJbwCD17dB0tEpQiw1XyUEKZJtgm4nA4xq3LLsMo7hu5UY/BOFmroAxKTMg==}
@@ -1113,6 +1125,8 @@ snapshots:
 
   kleur@4.1.5: {}
 
+  libphonenumber-js@1.10.43: {}
+
   lightningcss-darwin-arm64@1.29.2:
     optional: true
 
@@ -1237,6 +1251,11 @@ snapshots:
       typescript: 5.8.3
     transitivePeerDependencies:
       - picomatch
+
+  svelte-tel-input@3.6.0(svelte@5.28.2):
+    dependencies:
+      libphonenumber-js: 1.10.43
+      svelte: 5.28.2
 
   svelte@5.28.2:
     dependencies:

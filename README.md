@@ -2,18 +2,23 @@
 
 SIP Caller component using svelte
 
-## Project status
-+ [ ] UI: basic
-+ [ ] UX: longpress inpup
-+ [ ] UI: caller ID
-+ [ ] UX: keep focus: after pushing button, keep focus
-> commit
-+ [ ] UX: svelte phone validation (country etc)
-+ [ ] Split into phoneInputComponent -> export enter event
-> commit
+## Acceptance criteria
++ [x] UI: modern, similar to Android/iOS calling
++ [x] UX: longpress inpup
++ [x] UI: caller ID
++ [x] UX: keep input focused after pressing keyboard buttons
++ [x] UX: svelte phone validation (country etc)
++ [x] Split into phoneInputComponent -> export enter event
 + [ ] feat: SIP Limit calling countries by code
 + [ ] config: contact options, bind value, control:{setPhoneNumber, call}
-+ [ ] Recents list UI (fetchRecents option)
+    interface Props {
+        onCall?: (phoneNumber: string) => void;
+        phoneNumber?: string;
+        phoneNumberValid?: boolean;
+        validationError?: string;
+    }
++ [ ] UI: currently calling view with blur. Mute/statistics/hold/transfer
++ [ ] Recents list UI (fetchRecents option) -> view user recents (?) optional
 + [ ] Event Out callbacks
 + [ ] Implement Sip.js settings
 
