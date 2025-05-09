@@ -24,5 +24,11 @@
 		"onlyBuiltDependencies": [
 			"esbuild"
 		]
+	},
+	"dependencies": {
+		"@mdi/js": "^7.4.47",
+		"@tailwindcss/vite": "^4.1.5",
+		"sip.js": "^0.21.2",
+		"tailwindcss": "^4.1.5"
 	}
 }

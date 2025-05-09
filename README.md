@@ -1,38 +1,28 @@
-# sv
+# svelte-sip
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+SIP Caller component using svelte
 
-## Creating a project
+## Project status
++ [ ] UI: basic
++ [ ] UX: longpress inpup
++ [ ] UI: caller ID
++ [ ] UX: keep focus: after pushing button, keep focus
+> commit
++ [ ] UX: svelte phone validation (country etc)
++ [ ] Split into phoneInputComponent -> export enter event
+> commit
++ [ ] feat: SIP Limit calling countries by code
++ [ ] config: contact options, bind value, control:{setPhoneNumber, call}
++ [ ] Recents list UI (fetchRecents option)
++ [ ] Event Out callbacks
++ [ ] Implement Sip.js settings
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Usage
 
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+```svelte
+<!-- Dummy usage -->
+<SvelteSIP />
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Backend setup notes
+Please note that you will need a sip account on a server that supports SIP over websockets. Test if your provider allows that. If not, you may need to setup a PBX or SIP router to manage your calls.
