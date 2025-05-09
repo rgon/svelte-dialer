@@ -13,21 +13,28 @@
         value: E164Number | string | null;
         // Any Country Code Alpha-2 (ISO 3166)
         selectedCountry?: CountryCode | null;
-        defaultCountries?: string[]; // Country code ISO 3166-1 alpha-2
-        countryWhitelist?: CountryCode[]; // Country code ISO 3166-1 alpha-2
         // Optional - Extended details about the parsed phone number
         detailedValue?: DetailedValue | null;
         valid?: boolean;
         validationError?: string;
+        
+        // Array of Country Code Alpha-2 (ISO 3166)
+        defaultCountries?: string[]; 
+        // Array of Country Code Alpha-2 (ISO 3166)
+        countryWhitelist?: CountryCode[];
+
+        disabled?: boolean;
     }
     let {
         value = $bindable(''),
         valid = $bindable(true),
         selectedCountry = $bindable(null),
-        defaultCountries = [],
-        countryWhitelist = [],
         validationError = $bindable(''),
         detailedValue = $bindable(null),
+        
+        defaultCountries = [],
+        countryWhitelist = [],
+        disabled = false
     }:Props = $props();
 
     $effect(() => {
@@ -41,9 +48,6 @@
             validationError = '';
         }
     });
-
-    // TODO: UNIMPLEMENTED
-    const disabled = $state(false);
 
     let textInput: HTMLInputElement | undefined = $state(undefined);
     
@@ -220,6 +224,7 @@
                 bind:valid
                 bind:detailedValue
                 bind:el={textInput}
+                {disabled}
                 options={{
                     // format: 'international'
                     // invalidateOnCountryChange: true,
@@ -230,6 +235,7 @@
             <button
                 type="button"
                 aria-label="Backspace"
+                {disabled}
                 onpointerup={focusInput}
     
                 use:longpress
@@ -312,18 +318,21 @@
             <button
                 type="button"
                 tabindex="-1"
-    
+                {disabled}
+
                 onpointerup={focusInput}
                 onpointerdown={focusInput}
                 
                 use:longpress
-                onshortpress={(event) => {if (!event?.defaultPrevented) addKey(button.value) }}
+                onshortpress={(event) => {if (!event?.defaultPrevented && !disabled) addKey(button.value) }}
                 onlongpress={(event) => event.target?.dispatchEvent(new CustomEvent('contextmenu', { bubbles: true }))}
-                oncontextmenu={(event) => { event.preventDefault(); button.longPressValue ? addKey(button.longPressValue) : null }}
+                oncontextmenu={(event) => { event.preventDefault(); (button.longPressValue && !disabled) ? addKey(button.longPressValue) : null }}
     
                 class="relative text-center
                         p-4 text-xl font-semibold
-                        bg-gray-200 hover:bg-gray-300 rounded-full focus:outline-none transition-colors"
+                        bg-gray-200
+                        {disabled ? ' text-gray-400' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}
+                        rounded-full focus:outline-none transition-colors"
             >
                 {button.value}
                 {#if button.longPressValue}

@@ -39,7 +39,7 @@
     </div>
 
     <PhoneInput 
-        countryWhitelist={['ES']}
+        countryWhitelist={['ES']} disabled={true}
         bind:value={phoneNumber} 
         bind:valid={phoneNumberValid} bind:validationError />
     
