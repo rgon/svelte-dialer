@@ -39,14 +39,14 @@
     </div>
 
     <PhoneInput 
-        countryWhitelist={['ES']} disabled={true}
+        countryWhitelist={['ES']} disabled={false}
         bind:value={phoneNumber} 
         bind:valid={phoneNumberValid} bind:validationError />
     
     <div class="flex w-full gap-2">
         <button
             onclick={makeCall}
-            disabled={!phoneNumberValid}
+            disabled={!phoneNumberValid || phoneNumber.length === 0}
             class="group relative flex-grow p-4 text-xl font-semibold text-white bg-green-500 hover:bg-green-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
             Call

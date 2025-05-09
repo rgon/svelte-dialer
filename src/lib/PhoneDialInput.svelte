@@ -1,6 +1,7 @@
 <script lang="ts">
 	import 'svelte-tel-input/styles/flags.css';
     import { tick } from 'svelte';
+    import { fade } from 'svelte/transition';
     import { mdiBackspace } from '@mdi/js';
 
     import { TelInput, normalizedCountries, isSelected } from 'svelte-tel-input';
@@ -27,7 +28,7 @@
     }
     let {
         value = $bindable(''),
-        valid = $bindable(true),
+        valid = $bindable(false),
         selectedCountry = $bindable(null),
         validationError = $bindable(''),
         detailedValue = $bindable(null),
@@ -188,16 +189,18 @@
 </script>
 
 <div class="w-full relative" use:clickOutsideAction={() => { countryDropdownOpen = false }}>
-    <div class="mb-4 w-full">        
-        <div class="relative flex flex-row gap-0 items-center justify-center
+    <div class="mb-4 w-full">
+        <div class="
+            h-14
+            relative grid grid-cols-[1fr_auto_1fr] grid-rows-1 gap-0.5 items-center justify-center
             w-full bg-white border border-gray-300 rounded-md
             showDeleteButtonIfPlaceholder">
             <button
                 id="states-button"
                 data-dropdown-toggle="dropdown-states"
                 class="
-                    relative flex-shrink-0 
-                    py-2.5 pl-2 text-sm font-normal text-center 
+                    relative flex-shrink-0 flex-grow-0 w-auto
+                    py-3 pl-1.5
                     focus:outline-none dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
                 type="button"
                 role="combobox"
@@ -209,9 +212,9 @@
             >
                 {#if selectedCountry}
                     {@const selectedCountryDialCode = normalizedCountries.find((country) => country.iso2 === selectedCountry)?.dialCode}
-                    <div class="inline-flex items-center text-left">
-                        <span class="flag flag-{selectedCountry.toLowerCase()} flex-shrink-0 mr-1"></span>
-                        <span class=" text-gray-600 dark:text-gray-400 text-2xl font-normal">+{selectedCountryDialCode}</span>
+                    <div class="relative inline-block text-left w-full" transition:fade={{ duration: 200 }}>
+                        <span class="absolute left-0 top-0 bottom-0 my-auto flag flag-{selectedCountry.toLowerCase()}"></span>
+                        <span class="ml-[26px] pl-1 text-gray-600 dark:text-gray-400 text-xl font-normal">+{selectedCountryDialCode}</span>
                     </div>
                 {:else}
                     <span class="mt-1 inline-block leading-none uppercase text-xs text-gray-400">select<br>country</span>
@@ -230,7 +233,7 @@
                     // invalidateOnCountryChange: true,
                 }}
                 placeholder="&nbsp;"
-                class="p-3 px-1 text-2xl text-center w-16 grow shrink-0 focus:outline-none"
+                class="p-3 px-0 text-xl text-center w-full grow focus:outline-none"
             />
             <button
                 type="button"
@@ -253,7 +256,7 @@
             </button>
     
             <!-- Spacer that can shrink -->
-            <div class="w-16 shrink"></div>
+            <div class="w-18 shrink"></div>
         </div>
     </div>
 
