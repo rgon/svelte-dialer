@@ -1,6 +1,5 @@
 <script module lang="ts">
     export const STATE_MACHINE_STATES = {
-        DISCONNECTED: 'DISCONNECTED', // TODO: exit out of this state
         CONNECTING_TO_SERVER: 'CONNECTING_TO_SERVER',
         SERVER_CONNECTION_ERROR: 'SERVER_CONNECTION_ERROR',
         INCOMING_CALL: 'INCOMING_CALL',
@@ -80,12 +79,35 @@
             console.debug('Disconnecting from SIP server');
             sipUser.disconnect();
             sipUser = undefined;
-            sipState = STATE_MACHINE_STATES.DISCONNECTED;
+            sipErrorMessage = '';
+            sipState = STATE_MACHINE_STATES.SERVER_CONNECTION_ERROR;
         }
     }
 
     let internalSipOptions:SimpleUserOptions = $derived({
         ...sipOptions,
+        delegate: {
+            onCallHangup() {
+                console.debug('Call hangup');
+                callError = undefined;
+                sipState = STATE_MACHINE_STATES.POST_CALL;
+
+                onHangup?.();
+            },
+            onServerDisconnect(error:any) {
+                console.debug('Server disconnected');
+                sipState = STATE_MACHINE_STATES.SERVER_CONNECTION_ERROR;
+                sipErrorMessage = error.message;
+            },
+            onCallCreated: async () => {
+                console.debug('Call created');
+                sipState = STATE_MACHINE_STATES.IN_CALL;
+            },
+            onCallReceived: async () => {
+                console.debug('Incoming Call!');
+                sipState = STATE_MACHINE_STATES.INCOMING_CALL;
+            }
+        },
         media: {
             ...sipOptions.media,
             remote: {
@@ -148,64 +170,29 @@
         connectToSipServer();
     })
 
-    // Connect to server and place call
-    // simpleUser.connect()
-    //     .then(() => simpleUser.call("sip:bob@example.com"))
-    //     .catch((error: Error) => {
-    //         // Call failed
-    //     });
-
-    //     // Handle incoming calls
-    // simpleUser.on('invite', (session) => {
-    //     // Handle incoming call
-    //     console.log('Incoming call from:', session.remoteIdentity.uri);
-    // });
-
-    //     const options = {
-    //         uri: phoneNumber,
-    //         transportOptions: {
-    //             server: sipServer,
-    //             traceSip: true
-    //         },
-    //         media: {
-    //             constraints: {
-    //                 audio: true,
-    //                 video: false
-    //             },
-    //             render: {
-    //                 remote: getAudioElement('remoteAudio'),
-    //                 local: getAudioElement('localAudio')
-    //             }
-    //         }
-    //     };
-
-    //     const user = new Web.SimpleUser(sipServer, options);
-
-    //     user.on('invite', (session) => {
-    //         // Handle incoming call
-    //         console.log('Incoming call from:', session.remoteIdentity.uri);
-    //     });
-
-    //     user.on('callStateChanged', (state) => {
-    //         sipState.set(state);
-    //     });
-
-    //     return user;    
-    // });
-
     let callTime = $state('00:00');
+    // Count call time timer:
+    $effect(() => {
+        if (sipState === STATE_MACHINE_STATES.IN_CALL) {
+            const startTime = Date.now();
+            const interval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                callTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    });
+
     let callError:string|undefined = $state('');
 
     control = {
         call: () => {
-            if (onCall) {
-                onCall(phoneNumber);
-            }
+            if (phoneNumberValid) handlePlaceCall(phoneNumber);
         },
         hangup: () => {
-            if (onHangup) {
-                onHangup();
-            }
+            handleHangup();
         }
     }
 
@@ -224,7 +211,10 @@
         return contacts[phoneNumber] || undefined;
     });
 
-    function placeCall(phoneNumber:string) {
+    function handlePlaceCall(phoneNumber:string) {
+        callTime = '00:00';
+        callError = undefined;
+
         if (sipState !== STATE_MACHINE_STATES.IDLE || !sipUser) {
             console.error('Not connected to SIP server');
             sipErrorMessage = 'Not connected to SIP server';
@@ -279,7 +269,7 @@
     
     <div class="flex w-full gap-2">
         <button
-            onclick={() => placeCall(phoneNumber)}
+            onclick={() => handlePlaceCall(phoneNumber)}
             disabled={!phoneNumberValid || phoneNumber.length === 0 || sipState !== STATE_MACHINE_STATES.IDLE}
             class="h-14 group relative flex-grow p-3.5 text-xl font-semibold text-white bg-green-500 hover:bg-green-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
         >

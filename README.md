@@ -24,8 +24,13 @@ SIP Caller component using svelte
 + [x] retry server connection
 + [x] place call method
 + [x] hangup method
++ [x] handle call events. Handle call time
++ [x] Implement control, Event callbacks
+
 + [ ] incoming call UI and implementation
-+ [ ] Event Out callbacks
+        await sipUser?.answer();
+    + [ ] animated screen
+
 + [ ] dialer in call for DTMF
 
 + [ ] UI: clear phone number after call (prevent retry click)
