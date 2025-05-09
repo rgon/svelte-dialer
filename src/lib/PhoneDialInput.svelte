@@ -242,13 +242,13 @@
                 onpointerup={focusInput}
     
                 use:longpress
-                onshortpress={deleteLastChar}
+                onshortpress={() => { if (!disabled) deleteLastChar() }}
                 onlongpress={(event) => event.target?.dispatchEvent(new CustomEvent('contextmenu', { bubbles: true }))}
-                oncontextmenu={(event) => { event.preventDefault(); value = ''; focusInput() }}
+                oncontextmenu={(event) => { event.preventDefault(); if (!disabled) { value = ''; focusInput() }}}
     
                 class="
                     notIfInputEmpty
-                    absolute right-2 top-0 bottom-0 inset-y-0 flex items-center text-gray-600 hover:text-gray-800"
+                    absolute right-2 top-0 bottom-0 inset-y-0 flex items-center {disabled ? "text-gray-400" : "text-gray-600 hover:text-gray-800"}"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                     <path d={mdiBackspace} />

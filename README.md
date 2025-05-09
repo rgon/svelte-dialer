@@ -18,10 +18,18 @@ SIP Caller component using svelte
         phoneNumberValid?: boolean;
         validationError?: string;
     }
-+ [ ] UI: currently calling view with blur. Mute/statistics/hold/transfer
-+ [ ] Recents list UI (fetchRecents option) -> view user recents (?) optional
++ [x] UI: currently calling view with blur. Mute/statistics/hold/transfer
++ [x] Implement Sip.js: settings & initialization
++ [x] Basic server connection. Server connection information.
++ [x] retry server connection
++ [x] place call method
++ [x] hangup method
++ [ ] incoming call UI and implementation
 + [ ] Event Out callbacks
-+ [ ] Implement Sip.js settings
++ [ ] dialer in call for DTMF
+
++ [ ] UI: clear phone number after call (prevent retry click)
++ [ ] Recents list UI (fetchRecents option) -> view user recents (?) optional
 
 ## Usage
 

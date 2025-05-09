@@ -1,6 +1,7 @@
 <script lang="ts">
     import '../app.css';
     import SvelteSIP from '$lib/SvelteSIP.svelte';
+    
 </script>
 
 <div class="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
@@ -14,7 +15,19 @@
                 <div class="divide-y divide-gray-200">
                     <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
                         <!-- <p>Check out this awesome component!</p> -->
-                        <SvelteSIP />
+                        <SvelteSIP sipServer="wss://sip.example.com:443" sipOptions={{
+                            aor: 'sip:alice@example.com',
+                            userAgentOptions: {
+                                authorizationUsername: 'alice',
+                                authorizationPassword: 'password',
+                            },
+                            media: {
+                                constraints: {
+                                    audio: true,
+                                    video: false
+                                }
+                            }
+                        }} />
                     </div>
                     
                     <div class="pt-6 text-base leading-6 sm:text-lg sm:leading-7">
