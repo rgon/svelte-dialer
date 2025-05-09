@@ -10,8 +10,8 @@ SIP Caller component using svelte
 + [x] UX: svelte phone validation (country etc)
 + [x] Split into phoneInputComponent -> export enter event
 + [x] feat: country search
-+ [ ] feat: SIP Limit calling countries by code
-+ [ ] config: contact options, bind value, control:{setPhoneNumber, call}
++ [x] feat: SIP Limit calling countries by code
++ [x] config: contact options, bind value, control:{setPhoneNumber, call}
     interface Props {
         onCall?: (phoneNumber: string) => void;
         phoneNumber?: string;

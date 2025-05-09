@@ -3,7 +3,40 @@
 
     import PhoneInput from './PhoneDialInput.svelte';
 
-    let phoneNumber = $state('');
+    interface Props {
+        phoneNumber?: string;
+        
+        onCall?: (phoneNumber: string) => void;
+        onHangup?: () => void;
+        onError?: (error: string) => void;
+
+        control?: {
+            call: () => void;
+            hangup: () => void;
+        };
+    }
+    let {
+        phoneNumber = $bindable(''),
+        onCall,
+        onHangup,
+        onError,
+
+        control = $bindable(undefined)
+    }:Props = $props();
+
+    control = {
+        call: () => {
+            if (onCall) {
+                onCall(phoneNumber);
+            }
+        },
+        hangup: () => {
+            if (onHangup) {
+                onHangup();
+            }
+        }
+    }
+
     let phoneNumberValid = $state(true);
     let validationError = $state('');
 
