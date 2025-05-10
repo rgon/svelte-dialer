@@ -38,22 +38,22 @@
                     <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
                         <!-- <p>Check out this awesome component!</p> -->
                         <SvelteSIP
-                        defaultCountries={['ES', 'US']}
-                        getSipCallUri={(phoneNumber) => `${settings.SIP_CALL_URI_PREFIX}${phoneNumber}${settings.SIP_CALL_URI_SUFFIX}`}
-                        sipServer={settings.SIP_SERVER}
-                        sipOptions={{
-                            aor: settings.SIP_AOR,
-                            userAgentOptions: {
-                                authorizationUsername: settings.SIP_AUTH_USERNAME,
-                                authorizationPassword: settings.SIP_AUTH_PASSWORD
-                            },
-                            media: {
-                                constraints: {
-                                    audio: true,
-                                    video: false
+                            defaultCountries={['ES', 'US']}
+                            getSipCallUri={(phoneNumber) => `${settings.SIP_CALL_URI_PREFIX}${phoneNumber}${settings.SIP_CALL_URI_SUFFIX}`}
+                            sipServer={settings.SIP_SERVER}
+                            sipOptions={{
+                                aor: settings.SIP_AOR,
+                                userAgentOptions: {
+                                    authorizationUsername: settings.SIP_AUTH_USERNAME,
+                                    authorizationPassword: settings.SIP_AUTH_PASSWORD
+                                },
+                                media: {
+                                    constraints: {
+                                        audio: true,
+                                        video: false
+                                    }
                                 }
-                            }
-                        }} />
+                            }} />
                     </div>
                     
                     <!-- Simple configuration -->
