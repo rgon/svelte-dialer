@@ -1,0 +1,24 @@
+# Routr Peers Configuration
+apiVersion: v1
+kind: Collection
+items:
+  - apiVersion: v1
+    kind: Peer
+    metadata:
+      name: web-client-peer # A name for this peer object
+    spec:
+      # The username part of the SIP URI for your web client
+      # This should match the username you use in SIP.js
+      username: your-web-client-username # Replace with the username
+
+      # Link to the credentials object for this peer
+      credentialsRef: web-client-credentials
+
+      # Link to the domain this peer belongs to
+      domainRef: mydomain # Must match the name in domains.yaml
+
+      # ACL Ref to apply access control rules for this peer (defined in acl.yaml)
+      aclRef: web-client-acl
+
+      # Optional: Configure expires if registration is needed (usually true for web clients)
+      expires: 600

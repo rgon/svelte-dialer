@@ -1,0 +1,54 @@
+# Main Routr Configuration
+apiVersion: v1
+kind: Configuration
+
+spec:
+  # Data Store configuration (already set via environment variables in docker-compose)
+  # dataStore:
+  #   provider: redis
+  #   parameters:
+  #     host: redis
+  #     port: 6379
+
+  # API configuration (optional, useful for management)
+  # api:
+  #   bindAddr: 0.0.0.0
+  #   bindPort: 5190
+  #   enable: true
+
+  # Logging configuration
+  logging:
+    level: INFO # Set to DEBUG for more verbose logs
+    # file: /var/log/routr.log # Uncomment and mount a volume if you want log files
+
+  # Listeners define how Routr receives SIP traffic
+  listeners:
+    - name: websocket-listener
+      protocol: ws # Or wss for secure WebSocket (requires TLS config)
+      host: 0.0.0.0 # Listen on all interfaces
+      port: 5060 # The port exposed in docker-compose.yml
+      # If using wss, uncomment and configure TLS:
+      # tls:
+      #   mutualAuth: false # Set to true if clients must present certificates
+      #   certFile: /etc/routr/certs/fullchain.pem # Path to your cert inside container
+      #   keyFile: /etc/routr/certs/privkey.pem # Path to your key inside container
+      #   caFile: /etc/routr/certs/ca.pem # Optional: CA bundle if needed
+
+    # Optional: Listener for traditional SIP from provider if needed
+    # - name: provider-listener
+    #   protocol: udp # Or tcp
+    #   host: 0.0.0.0 # Listen on all interfaces
+    #   port: 5060 # The port exposed in docker-compose.yml
+    #   externalHost: your_routr_server_public_ip # Crucial for provider side NAT
+    #   externalPort: 5060
+
+  # Codecs to allow globally (Opus for WebRTC, G.722 for provider)
+  codecs:
+    - opus
+    - g722
+    - pcmu
+    - pcma
+
+  # Media server configuration (Routr proxies media by default, no separate media server needed for basic proxying)
+  # If you need advanced media features (transcoding, mixing), you'd integrate with a media server like Mediasoup or Janus.
+  # For simple proxying and transcoding handled by the endpoints/Routr itself, this section is not needed.

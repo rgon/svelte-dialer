@@ -1,0 +1,12 @@
+# Routr Domains Configuration
+apiVersion: v1
+kind: Collection
+items:
+  - apiVersion: v1
+    kind: Domain
+    metadata:
+      name: mydomain # A name for this domain object
+    spec:
+      # The actual SIP domain name your clients will use (e.g., your-company.com)
+      # This should match the domain part of your SIP.js URI (sip:user@your-domain.com)
+      ref: your-domain.com # Replace with your chosen domain

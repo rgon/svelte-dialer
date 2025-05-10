@@ -1,0 +1,22 @@
+# Routr ACL Configuration
+apiVersion: v1
+kind: Collection
+items:
+  - apiVersion: v1
+    kind: ACL
+    metadata:
+      name: web-client-acl # A name for this ACL object
+    spec:
+      # Rules define what destinations this peer is allowed to call
+      rules:
+        - # Rule 1: Allow calls to the external provider gateway
+          description: "Allow calls to the external provider"
+          request: INVITE # Apply this rule to INVITE requests
+          methods: # Optional: specify methods
+            - INVITE
+          actions:
+            - # Action 1: Route the call to the provider gateway
+              name: route
+              # Route the call to the gateway defined in gateways.yaml
+              properties:
+                gatewayRef: my-provider-gateway # Must match the name in gateways.yaml

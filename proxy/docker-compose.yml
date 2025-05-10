@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine # Use a lightweight Redis image
+    container_name: routr-redis
+    command: redis-server --appendonly yes # Enable persistence
+    volumes:
+      - redis_data:/data # Persist Redis data
+    ports:
+      - "6379:6379" # Optional: Expose Redis port if needed for debugging/monitoring
+
+  routr:
+    image: fonoster/routr:latest # Use the latest Routr image
+    container_name: routr-proxy
+    depends_on:
+      - redis # Ensure Redis starts before Routr
+    environment:
+      # Configure Routr to use Redis as the data store
+      - ROUTR_DATA_STORE_HOST=redis
+      - ROUTR_DATA_STORE_PORT=6379
+      # Point Routr to the configuration directory
+      - ROUTR_CONFIG_PATH=/etc/routr/config
+    volumes:
+      # Mount your local configuration directory into the container
+      - ./config:/etc/routr/config:ro
+    ports:
+      # REST
+      - "4567:4567" # Optional: Expose REST API port if needed
+      # - "5060:5060"
+      - "5062:5062" # ws
+      - "5063:5063" # wss
+      # Expose the traditional SIP listener port (if you need to receive calls from provider on UDP/TCP)
+      # - "5060:5060/udp"
+      # - "5060:5060/tcp"
+    restart: unless-stopped
+
+volumes:
+  redis_data: # Define the volume for Redis data persistence

@@ -1,0 +1,24 @@
+# Routr Gateways Configuration
+apiVersion: v1
+kind: Collection
+items:
+  - apiVersion: v1
+    kind: Gateway
+    metadata:
+      name: my-provider-gateway # A name for this gateway object
+    spec:
+      # The address of your SIP provider
+      host: your-sip-provider-host-or-ip # Replace with your provider's details
+      port: 5060 # Replace with your provider's port
+      transport: udp # Or tcp, depends on your provider
+      # Optional: If your provider requires authentication for outbound calls
+      # credentialsRef: provider-credentials # Link to credentials object below
+
+      # Codecs allowed to/from this gateway
+      allow:
+        - g722
+        - pcmu
+        - pcma
+
+      # Optional: Configure expires if registration is needed
+      # expires: 600

@@ -26,7 +26,9 @@ SIP Caller component using svelte
 + [x] hangup method
 + [x] handle call events. Handle call time
 + [x] Implement control, Event callbacks
-
++ [x] Fix ui animations @ call flow
++ [ ] sip proxy minimal working example. Use routr.io since it looks awesome
+    + [ ] add secrets? Edit yaml?
 + [ ] incoming call UI and implementation
         await sipUser?.answer();
     + [ ] animated screen
@@ -36,6 +38,13 @@ SIP Caller component using svelte
 + [ ] UI: clear phone number after call (prevent retry click)
 + [ ] Recents list UI (fetchRecents option) -> view user recents (?) optional
 
++ [ ] UX: determine if call finally established or not
+
+----
++ [ ] backend minimal example
+    + [ ] activate debug logging
++ [ ] fetch credentials from env
++ [ ] example env file
 ## Usage
 
 ```svelte

@@ -15,11 +15,14 @@
                 <div class="divide-y divide-gray-200">
                     <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
                         <!-- <p>Check out this awesome component!</p> -->
-                        <SvelteSIP sipServer="wss://edge.sip.onsip.com" sipOptions={{
-                            aor: 'sip:myuser@example.com',
+                        <SvelteSIP
+                        getSipCallUri={(phoneNumber) => `sip:${phoneNumber}@your-domain.com`}
+                        sipServer="ws://localhost:5062"
+                        sipOptions={{
+                            aor: 'sip:your-web-client-username@your-domain.com',
                             userAgentOptions: {
-                                authorizationUsername: 'myuser',
-                                authorizationPassword: 'example',
+                                authorizationUsername: 'your-web-client-username',
+                                authorizationPassword: 'your-web-client-password',
                             },
                             media: {
                                 constraints: {
