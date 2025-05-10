@@ -123,8 +123,8 @@
         }
         // Validate SIP server URL
         if (!sipServer.startsWith('wss://') && !sipServer.startsWith('ws://')) {
-            sipErrorMessage = 'SIP server must start with "wss://"';
-            throw new Error('SIP server must start with "wss://"');
+            sipErrorMessage = 'SIP server must start with "ws://" or "wss://"';
+            throw new Error(sipErrorMessage);
         }
 
         if (!sipJSWeb) {

@@ -15,11 +15,11 @@
                 <div class="divide-y divide-gray-200">
                     <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
                         <!-- <p>Check out this awesome component!</p> -->
-                        <SvelteSIP sipServer="wss://sip.example.com:443" sipOptions={{
-                            aor: 'sip:alice@example.com',
+                        <SvelteSIP sipServer="wss://edge.sip.onsip.com" sipOptions={{
+                            aor: 'sip:myuser@example.com',
                             userAgentOptions: {
-                                authorizationUsername: 'alice',
-                                authorizationPassword: 'password',
+                                authorizationUsername: 'myuser',
+                                authorizationPassword: 'example',
                             },
                             media: {
                                 constraints: {
