@@ -35,6 +35,7 @@
         // SIP configuration
         sipOptions:SimpleUserOptions;
         sipServer: string;
+        getSipCallUri?: (phoneNumber:string) => string;
         phoneNumber?: string;
         
         onCall?: (phoneNumber: string) => void;
@@ -51,6 +52,7 @@
     let {
         sipOptions,
         sipServer, // 'wss://sip.example.com:443',
+        getSipCallUri = (phoneNumber:string) => `sip:${phoneNumber}@example.com`,
         phoneNumber = $bindable('+34623456789'),
         onCall,
         onHangup,
@@ -65,6 +67,8 @@
     let sipJSWeb:(typeof Web)|undefined = $state(undefined);
     let sipUser:Web.SimpleUser|undefined = undefined;
     let sipErrorMessage = $state('');
+    let callWasEstablished = $state(false);
+    let isWaitingForCall = $state(false);
 
     // on mount
     onMount(async() => {
@@ -97,10 +101,16 @@
             onServerDisconnect(error:any) {
                 console.debug('Server disconnected');
                 sipState = STATE_MACHINE_STATES.SERVER_CONNECTION_ERROR;
-                sipErrorMessage = error.message;
+                sipErrorMessage = error?.message ?? 'Server disconnected';
             },
             onCallCreated: async () => {
+                callWasEstablished = false;
                 console.debug('Call created');
+                sipState = STATE_MACHINE_STATES.CALLING;
+            },
+            onCallAnswered() {
+                callWasEstablished = true;
+                console.debug('Call answered');
                 sipState = STATE_MACHINE_STATES.IN_CALL;
             },
             onCallReceived: async () => {
@@ -160,6 +170,7 @@
         await sipUser.register();
         console.debug('Registered to receive incoming calls');
         sipState = STATE_MACHINE_STATES.IDLE;
+        sipErrorMessage = '';
     }
 
     $effect(() => {
@@ -211,7 +222,7 @@
         return contacts[phoneNumber] || undefined;
     });
 
-    function handlePlaceCall(phoneNumber:string) {
+    async function handlePlaceCall(phoneNumber:string) {
         callTime = '00:00';
         callError = undefined;
 
@@ -228,7 +239,18 @@
         if (onCall) {
             onCall(phoneNumber);
         }
-        sipUser?.call('bob@example.com');
+        if (!isWaitingForCall) {
+            isWaitingForCall = true;
+            try {
+                await sipUser?.call(getSipCallUri(phoneNumber));
+            } catch (error:any) {
+                console.error('Error placing call:', error);
+                callError = error.message;
+                sipState = STATE_MACHINE_STATES.POST_CALL;
+                return;
+            }
+            isWaitingForCall = false;
+        }
         sipState = STATE_MACHINE_STATES.CALLING;
     }
     function handleHangup() {
@@ -238,8 +260,10 @@
             onHangup?.();
         } else if (sipState === STATE_MACHINE_STATES.POST_CALL) {
             sipState = STATE_MACHINE_STATES.IDLE;
-        } else {
+        } else if (sipState === STATE_MACHINE_STATES.CALLING) {
             sipState = STATE_MACHINE_STATES.IDLE;
+        } else {
+            throw new Error('Not implemented');
         }
     }
 </script>
@@ -273,7 +297,7 @@
             disabled={!phoneNumberValid || phoneNumber.length === 0 || sipState !== STATE_MACHINE_STATES.IDLE}
             class="h-14 group relative flex-grow p-3.5 text-xl font-semibold text-white bg-green-500 hover:bg-green-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
-            Call
+            {#if isWaitingForCall}Return to {/if} Call
         </button>
     </div>
 
@@ -297,12 +321,18 @@
                 {@render icon(mdiAlertCircle, 'inline-block mr-0.5 h-4')}
                 Connecting to SIP server...
             </span>
+        {:else if sipState === STATE_MACHINE_STATES.IDLE && isWaitingForCall}
+            <span class="text-gray-500">
+                {@render icon(mdiAlertCircle, 'inline-block mr-0.5 h-4')}
+                Cancelling call...
+            </span>
+
         {/if}
     </div>
 
     {#if sipState === STATE_MACHINE_STATES.CALLING || sipState === STATE_MACHINE_STATES.IN_CALL || sipState === STATE_MACHINE_STATES.POST_CALL}
     <div class="absolute w-full h-full backdrop-blur-md">
-        <div class="w-full h-full p-4 grid grid-rows-[1.5rem_auto_1fr_3.5rem_1.5rem] grid-cols-1 gap-0">
+        <div class="w-full h-full p-4 grid grid-rows-[1.5rem_auto_1fr_3.5rem_1.5rem] grid-cols-1 gap-0 callOverlay">
             <!-- Spacer -->
             <div class=""></div>
         
@@ -335,7 +365,7 @@
             {/snippet}
 
             {#if sipState === STATE_MACHINE_STATES.CALLING}
-            <div class="text-center text-gray-500 text-sm my-auto flex flex-col items-center justify-center" transition:fade>
+            <div class="[grid-area:content] text-center text-gray-500 text-sm my-auto flex flex-col items-center justify-center" transition:fade>
                 <div class="animate-ping h-8 w-8 rounded-full bg-gray-500 opacity-75"></div>
                 <span class="mt-4">
                     Establishing call...
@@ -343,25 +373,26 @@
             </div>
             {:else if sipState === STATE_MACHINE_STATES.IN_CALL}
             <!-- 4 buttons grid with svg mdi icons mute,hold,transfer,info -->
-            <div class="grid grid-cols-2 gap-8 h-auto my-auto mx-auto" transition:fade>
+            <div class="[grid-area:content] grid grid-cols-2 gap-8 h-auto my-auto mx-auto" transition:fade>
                 {@render actionButton(mdiMicrophoneOff, 'Mute')}
                 {@render actionButton(mdiPauseCircleOutline, 'Hold')}
                 {@render actionButton(mdiTransferRight, 'Transfer')}
                 {@render actionButton(mdiRadioboxMarked, 'Record')}
             </div>
             {:else if sipState === STATE_MACHINE_STATES.POST_CALL}
-            <div class="text-center text-gray-500 text-sm h-auto my-auto">
+            <div class="[grid-area:content] text-center text-gray-500 text-sm h-auto my-auto" transition:fade>
                 {#if callError}
                     <h3 class="text-xl">Could not place call</h3>
                     <span>{callError}</span>
-                {:else}
+                {:else if callWasEstablished}
                     <h3 class="text-xl">Call ended</h3>
                     <span>Duration {callTime}</span>
+                {:else}
+                    <h3 class="text-xl">No answer</h3>
+                    <span>Couldn't establish call</span>
                 {/if}
             </div>
             {/if}
-            
-
 
             <button
                 onclick={handleHangup}
@@ -388,3 +419,14 @@
     </div>
     {/if}
 </div>
+
+<style lang="postcss">
+    .callOverlay {
+        grid-template-areas: 
+            "space"
+            "header"
+            "content"
+            "footer"
+            "stats";
+    }
+</style>

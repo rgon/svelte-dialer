@@ -25,6 +25,8 @@
         countryWhitelist?: CountryCode[];
 
         disabled?: boolean;
+
+        class?: string;
     }
     let {
         value = $bindable(''),
@@ -35,7 +37,9 @@
         
         defaultCountries = [],
         countryWhitelist = [],
-        disabled = false
+        disabled = false,
+
+        class:mClass = ''
     }:Props = $props();
 
     $effect(() => {
@@ -188,7 +192,7 @@
 	};
 </script>
 
-<div class="w-full relative" use:clickOutsideAction={() => { countryDropdownOpen = false }}>
+<div class="w-full relative {mClass}" use:clickOutsideAction={() => { countryDropdownOpen = false }}>
     <div class="mb-4 w-full">
         <div class="
             h-14
