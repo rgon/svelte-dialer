@@ -37,6 +37,9 @@
         sipServer: string;
         getSipCallUri?: (phoneNumber:string) => string;
         phoneNumber?: string;
+
+        // Prioritize countries in list
+        defaultCountries?: string[];
         
         onCall?: (phoneNumber: string) => void;
         onHangup?: () => void;
@@ -54,6 +57,8 @@
         sipServer, // 'wss://sip.example.com:443',
         getSipCallUri = (phoneNumber:string) => `sip:${phoneNumber}@example.com`,
         phoneNumber = $bindable('+34623456789'),
+
+        defaultCountries = [],
         onCall,
         onHangup,
         onError,
@@ -287,6 +292,7 @@
     </div>
 
     <PhoneInput 
+        {defaultCountries}
         countryWhitelist={['ES']} disabled={sipState !== STATE_MACHINE_STATES.IDLE}
         bind:value={phoneNumber} 
         bind:valid={phoneNumberValid} bind:validationError />

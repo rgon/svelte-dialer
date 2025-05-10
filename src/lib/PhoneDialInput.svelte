@@ -218,7 +218,7 @@
                     {@const selectedCountryDialCode = normalizedCountries.find((country) => country.iso2 === selectedCountry)?.dialCode}
                     <div class="relative inline-block text-left w-full" transition:fade={{ duration: 200 }}>
                         <span class="absolute left-0 top-0 bottom-0 my-auto flag flag-{selectedCountry.toLowerCase()}"></span>
-                        <span class="ml-[26px] pl-1 text-gray-600 dark:text-gray-400 text-xl font-normal">+{selectedCountryDialCode}</span>
+                        <span class="ml-[26px] pl-1 leading-8 text-gray-600 dark:text-gray-400 text-xl font-normal">+{selectedCountryDialCode}</span>
                     </div>
                 {:else}
                     <span class="mt-1 inline-block leading-none uppercase text-xs text-gray-400">select<br>country</span>
