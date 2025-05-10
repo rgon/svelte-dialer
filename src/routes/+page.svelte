@@ -86,7 +86,7 @@
 
                     <div class="pt-6 text-base leading-6 sm:text-lg sm:leading-7">
                         <p class="text-gray-400 text-center">
-                            MIT Licensed
+                            GPL v3
                             <br>
                             by <a href="https://github.com/rgon">github.com/rgon</a>
                         </p>
